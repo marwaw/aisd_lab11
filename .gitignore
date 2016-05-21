@@ -1,5 +1,7 @@
-.settings/
-bin/
-.classpath
+$ cat .gitignore
+*.[oa]
+*~
 .project
-*.txt
+.settings
+.classpath
+bin
