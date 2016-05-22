@@ -63,14 +63,7 @@ public class Graph {
 		}
 	}
 	
-	public void setNotVisited(){
-		Iterator<Vertex> it = vertices.iterator();
-		while(it.hasNext()){
-			it.next().visited(false);
-		}
-	}
-	
-	public void dijkstra(String a, String b){
+	public void dijkstra(String a){
 		Vertex start = search(a, vertices);
 		if (start != null){
 			ArrayList<Vertex> notUsed = (ArrayList<Vertex>) vertices.clone();
@@ -102,8 +95,59 @@ public class Graph {
 				}
 				
 			}
-//			System.out.println("Dystans z " + a + " do " + b + " wynosi "+ distance[search(b, vertices).getIndex()]);
 			displayMinDis(distance, prev);
+		}
+	}
+	
+	public void BFS(String start){
+		Queue<Vertex> kolejka = new LinkedList<>();
+		Vertex ver = search(start, vertices);
+		kolejka.add(ver);
+		
+		System.out.println("Przechodzenie wszerz: ");
+		
+		while(!kolejka.isEmpty()){
+			Vertex odwiedzany = kolejka.peek();
+			
+			if (odwiedzany.visited == true) kolejka.poll();
+			
+			else{
+				odwiedzany.visited(true);
+				int ind = odwiedzany.getIndex();
+				ArrayList<Edge> sasiedzi = adjacencyList.get(ind);
+				
+				for(int i = 0; i < sasiedzi.size(); i++){
+					if (sasiedzi.get(i).getNeighbor().visited == false){
+						kolejka.add(sasiedzi.get(i).getNeighbor());
+					}
+				}
+				System.out.println("Odwiedzam: " + kolejka.poll().toString());
+			}
+		}
+		setUnvisited();
+	}
+	
+	public void DFS(String s){
+//		setUnvisited();
+		System.out.println("Przechodzenie wg³¹b: ");
+		Vertex v = search(s, vertices);
+		DFS(v);
+	}
+	
+	private void DFS(Vertex v){
+		System.out.println("Odwiedzam: " + v.toString());
+		v.visited(true);
+//		displayNeighbors(v.getValue());
+		
+		for (Edge e: adjacencyList.get(v.getIndex())){
+			if (e.getNeighbor().visited == false) DFS(e.getNeighbor());
+		}
+	}
+	
+	private void setUnvisited(){
+		Iterator<Vertex> it = vertices.iterator();
+		while (it.hasNext()){
+			it.next().visited(false);
 		}
 	}
 	
@@ -131,7 +175,6 @@ public class Graph {
 				if(arr[i] < arr[min.getIndex()]) min = ver.get(i);
 			}
 		}
-//		System.out.println("Min odleglosc: " + arr[min.getIndex()] + " dla wierzcholka " + min.toString());
 		return min;
 	}
 	
@@ -139,50 +182,30 @@ public class Graph {
 		for (int i = 0; i < tab.length; i++){
 			System.out.println("Dystans do " + vertices.get(i).getValue()+ " : " + tab[i]);
 			System.out.printf("Œcie¿ka: ");
-			System.out.printf(i + " - ");
+			System.out.printf(vertices.get(i).getValue() + " - ");
 			int j = i;
 //			if (prev[j] == -1) System.out.printf("pusta");
 			while (prev[j] != -1){
-				System.out.printf(prev[j] + " - ");
+				System.out.printf(vertices.get(prev[j]).getValue() + " - ");
 				j = prev[j];
 			}
 			System.out.println("koniec ");
+			System.out.println("------------------");
 		}
 	}
 	
 	public void displayNeighbors(String s){
+		System.out.println("-------");
 		System.out.println("S¹siedzi miasta: " + s);
 		int i = search(s, vertices).getIndex();
 		ArrayList<Edge> neighbors = adjacencyList.get(i);
 		Iterator<Edge> it = neighbors.iterator();
 		while(it.hasNext()){
-//			System.out.println(it.next().neighbor());
+			System.out.println(it.next().neighbor());
 		}
+		System.out.println("-------");
 	}
 	
-	public void wszerz(String start){
-		Queue<Vertex> kolejka = new LinkedList<>();
-		Vertex ver = search(start, vertices);
-		kolejka.add(ver);
-//		ver.visited(true);
-		
-		while(!kolejka.isEmpty()){
-			Vertex odwiedzany = kolejka.peek();
-			if (odwiedzany.visited == true) kolejka.poll();
-			else{
-				odwiedzany.visited(true);
-				int ind = odwiedzany.getIndex();
-				ArrayList<Edge> sasiedzi = adjacencyList.get(ind);
-				for(int i = 0; i < sasiedzi.size(); i++){
-					if (sasiedzi.get(i).getNeighbor().visited == false){
-						kolejka.add(sasiedzi.get(i).getNeighbor());
-					}
-				}
-				System.out.println("Odwiedzam: " + kolejka.poll().toString());
-			}
-			
-		}
-		
-	}
+	
 	
 }
